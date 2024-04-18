@@ -17,4 +17,7 @@ public class Edge {
     public float getWeight(){
         return weight;
     }
+    public String toString(){
+        return edge1 + " " + edge2 + " " + weight;
+    }
 }
