@@ -15,11 +15,11 @@ public class DataReader {
             String s = sc.nextLine();
             String[] inputs = s.split(" ");
 
-            int e1 = Integer.parseInt(inputs[0]);
-            int e2 = Integer.parseInt(inputs[1]);
+            int v1 = Integer.parseInt(inputs[0]);
+            int v2 = Integer.parseInt(inputs[1]);
             float weight = Float.parseFloat(inputs[2]);
 
-            Edge e = new Edge(e1, e2, weight);
+            Edge e = new Edge(v1, v2, weight);
             edges.add(e);
         }
     }

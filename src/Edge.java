@@ -1,23 +1,23 @@
 public class Edge {
-    private int edge1;
-    private int edge2;
+    private int vertex1;
+    private int vertex2;
     private float weight;
-    public Edge(int e1, int e2, float w){
-        edge1 = e1;
-        edge2 = e2;
+    public Edge(int v1, int v2, float w){
+        vertex1 = v1;
+        vertex2 = v2;
         weight = w;
     }
 
-    public int getEdge1(){
-        return edge1;
+    public int getVertex1(){
+        return vertex1;
     }
-    public int getEdge2(){
-        return edge2;
+    public int getVertex2(){
+        return vertex2;
     }
     public float getWeight(){
         return weight;
     }
     public String toString(){
-        return edge1 + " " + edge2 + " " + weight;
+        return vertex1 + " " + vertex2 + " " + weight;
     }
 }
