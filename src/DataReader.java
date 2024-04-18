@@ -3,9 +3,9 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 public class DataReader {
-    File file;
-    ArrayList<Edge> edges = new ArrayList<Edge>(10);
-    int numOfEdges;
+    private File file;
+    private ArrayList<Edge> edges = new ArrayList<Edge>(10);
+    private int numOfEdges;
     public DataReader() throws FileNotFoundException {
         file = new File("file:src/graph");
         Scanner sc = new Scanner(file);
@@ -22,5 +22,15 @@ public class DataReader {
             Edge e = new Edge(e1, e2, weight);
             edges.add(e);
         }
+    }
+    public ArrayList<Edge> getEdges(){
+        return edges;
+    }
+    public int getNumOfEdges(){
+        return numOfEdges;
+    }
+
+    public void Save(ArrayList<Edge> saveEdge){
+        //TODO: SAVE FILE OF EDGES CHOSEN
     }
 }
