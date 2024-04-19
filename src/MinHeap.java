@@ -69,6 +69,7 @@ public class MinHeap {
         if (minimum != null) {
             delete(index); // Delete the found edge if it's not null
         }
+        System.out.println(Arrays.toString(heapArray));
         System.out.println("Minimum Found: " + minimum);
         return minimum;
     }
@@ -131,6 +132,11 @@ public class MinHeap {
         idToIndexMap.remove(heapArray[currentSize].getVertex1());
         currentSize--;
         bubble_down(index);
+        Edge[] newArray = new Edge[currentSize+1];
+        for(int i = 1; i <= currentSize; i++){
+            newArray[i] = heapArray[i];
+        }
+        heapArray = newArray;
     }
 
     private void bubble_up(int index) {

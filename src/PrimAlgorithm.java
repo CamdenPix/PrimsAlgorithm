@@ -54,10 +54,8 @@ public class PrimAlgorithm {
             //System.out.println(minEdge.toString());
 
             minEdge = minHeap.findLowestEdge(chosenVertices);
-            if (minEdge == null) {
-                System.out.println("Oops, Dead end");
-            } else if(visited[minEdge.getVertex1()-1] && visited[minEdge.getVertex2()-1]){
-                System.out.println("Loop occurred");
+            if(visited[minEdge.getVertex1()-1] && visited[minEdge.getVertex2()-1]){
+                System.out.println("Loop occurred at: " +minEdge.getVertex1() + " and " + minEdge.getVertex2());
             } else if (visited[minEdge.getVertex1()-1] && !visited[minEdge.getVertex2()-1]) {
                 mstEdges.add(minEdge);
                 visited[minEdge.getVertex2()-1] = true;
