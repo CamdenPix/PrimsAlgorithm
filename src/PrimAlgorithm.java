@@ -43,32 +43,34 @@ public class PrimAlgorithm {
     }
 
     private void prim() {
+        //Start with the smallest edge
         Edge minEdge = minHeap.delete_min();
         mstEdges.add(minEdge);
+        //Mark vertices as visited
         visited[minEdge.getVertex1()-1] = true;
         chosenVertices.add(minEdge.getVertex1());
         visited[minEdge.getVertex2()-1] = true;
         chosenVertices.add(minEdge.getVertex2());
         int c = 0;
-        int vertex = minEdge.getVertex2();
         while (!allVerticesVisited() && minHeap.getCurrentSize() != 0) {
             System.out.println("Iteration: " + c);
-            //System.out.println(minEdge.toString());
 
+            //function to find the lowest edge that is adjacent to all chosen vertices
             minEdge = minHeap.findLowestEdge(chosenVertices);
+            //Don't accept edges that would loop
             if(visited[minEdge.getVertex1()-1] && visited[minEdge.getVertex2()-1]){
                 System.out.println("Loop occurred at: " +minEdge.getVertex1() + " and " + minEdge.getVertex2());
+            //Decide which vertex of an edge is new and add it
             } else if (visited[minEdge.getVertex1()-1] && !visited[minEdge.getVertex2()-1]) {
                 mstEdges.add(minEdge);
                 visited[minEdge.getVertex2()-1] = true;
-                vertex = minEdge.getVertex2();
                 chosenVertices.add(minEdge.getVertex2());
             } else if (!visited[minEdge.getVertex1()-1] && visited[minEdge.getVertex2()-1]) {
                 mstEdges.add(minEdge);
                 visited[minEdge.getVertex1()-1] = true;
-                vertex = minEdge.getVertex1();
                 chosenVertices.add(minEdge.getVertex1());
             }
+            //Some other case happened and something went wrong, like a tree that isn't fully connected
             else {
                 System.out.println("ERROR");
                 System.exit(-1);
