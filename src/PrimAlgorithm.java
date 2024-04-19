@@ -49,7 +49,7 @@ public class PrimAlgorithm {
         chosenVertices.add(minEdge.getVertex2());
         int c = 0;
         int vertex = minEdge.getVertex2();
-        while (!allVerticesVisited()) {
+        while (!allVerticesVisited() && minHeap.getCurrentSize() != 0) {
             System.out.println("Iteration: " + c);
             //System.out.println(minEdge.toString());
 

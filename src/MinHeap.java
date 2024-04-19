@@ -69,6 +69,7 @@ public class MinHeap {
         if (minimum != null) {
             delete(index); // Delete the found edge if it's not null
         }
+        System.out.println("Minimum Found: " + minimum);
         return minimum;
     }
 
