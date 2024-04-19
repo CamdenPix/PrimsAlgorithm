@@ -1,6 +1,7 @@
 
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,7 +13,7 @@ public class PrimAlgorithm {
     private ArrayList<Integer> chosenVertices;
     private MinHeap minHeap;
 
-    public PrimAlgorithm() throws FileNotFoundException {
+    public PrimAlgorithm() throws IOException {
         DataReader dataReader = new DataReader();
         ArrayList<Edge> edges = dataReader.getEdges();
         int numOfEdges = dataReader.getNumOfEdges();
@@ -34,6 +35,7 @@ public class PrimAlgorithm {
 
         // Perform Prim's algorithm
         prim();
+        DataReader.Save(mstEdges);
     }
 
     private boolean isEmpty(MinHeap minHeap) {
@@ -97,7 +99,7 @@ public class PrimAlgorithm {
             for (Edge edge : mstEdges) {
                 System.out.println(edge);
             }
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

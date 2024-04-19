@@ -1,5 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -37,7 +39,12 @@ public class DataReader {
         return numOfVertices;
     }
 
-    public static void Save(ArrayList<Edge> saveEdge){
-        //TODO: SAVE FILE OF EDGES CHOSEN
+    public static void Save(ArrayList<Edge> saveEdge) throws IOException {
+        FileWriter fWriter = new FileWriter("src/mst");
+        for(Edge edge : saveEdge) {
+            fWriter.write(edge.toString()+"\n");
+        }
+
+        fWriter.close();
     }
 }
