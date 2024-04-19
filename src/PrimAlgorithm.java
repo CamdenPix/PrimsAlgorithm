@@ -2,104 +2,88 @@
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 
 public class PrimAlgorithm {
     private ArrayList<Edge> mstEdges;
     private boolean[] visited;
+    private ArrayList<Integer> chosenVertices;
     private MinHeap minHeap;
 
     public PrimAlgorithm() throws FileNotFoundException {
         DataReader dataReader = new DataReader();
         ArrayList<Edge> edges = dataReader.getEdges();
-
         int numOfEdges = dataReader.getNumOfEdges();
 
-
         this.mstEdges = new ArrayList<>();
-        this.visited = new boolean[numOfEdges + 1]; // Assuming vertices are numbered from 1 to numOfEdges
+        this.chosenVertices = new ArrayList<Integer>();
+        this.visited = new boolean[dataReader.getNumOfVertices()]; // Assuming vertices are numbered from 1 to numOfEdges
         this.minHeap = new MinHeap(numOfEdges);
 
         // Initialize visited array
-        for (int i = 1; i <= numOfEdges; i++) {
+        for (int i = 0; i < dataReader.getNumOfVertices(); i++) {
             visited[i] = false;
         }
 
-        // Add all edges to the minHeap
-        minHeap.heap_ini(edges.toArray(new Edge[0]), numOfEdges);
-        System.out.println(minHeap.min_key());
+        // Add all edges to the minHeap and vertexToEdgesMap
+        for (Edge edge : edges) {
+            minHeap.insert(edge);
+        }
+
         // Perform Prim's algorithm
         prim();
     }
 
-    private boolean isEmpty(MinHeap minHeap){
-        try{
-            minHeap.min_key();
-            System.out.println("TRY PASSED");
-        }
-        catch(Exception e)
-        {
-            return true;
-        }
-        return false;
+    private boolean isEmpty(MinHeap minHeap) {
+        return minHeap.getCurrentSize() == 0;
     }
+
     private void prim() {
-        while (!isEmpty(minHeap)) {
-            System.out.println("INWHILELOOPP");
-            Edge minEdge = minHeap.delete_min();
-            int v1 = minEdge.getVertex1();
-            int v2 = minEdge.getVertex2();
+        Edge minEdge = minHeap.delete_min();
+        mstEdges.add(minEdge);
+        visited[minEdge.getVertex1()-1] = true;
+        chosenVertices.add(minEdge.getVertex1());
+        visited[minEdge.getVertex2()-1] = true;
+        chosenVertices.add(minEdge.getVertex2());
+        int c = 0;
+        int vertex = minEdge.getVertex2();
+        while (!allVerticesVisited()) {
+            System.out.println("Iteration: " + c);
+            //System.out.println(minEdge.toString());
 
-            if (!visited[v1] || !visited[v2]) {
+            minEdge = minHeap.findLowestEdge(chosenVertices);
+            if (minEdge == null) {
+                System.out.println("Oops, Dead end");
+            } else if(visited[minEdge.getVertex1()-1] && visited[minEdge.getVertex2()-1]){
+                System.out.println("Loop occurred");
+            } else if (visited[minEdge.getVertex1()-1] && !visited[minEdge.getVertex2()-1]) {
                 mstEdges.add(minEdge);
-                visited[v1] = true;
-                visited[v2] = true;
-                processNeighbours(v1);
-                processNeighbours(v2);
+                visited[minEdge.getVertex2()-1] = true;
+                vertex = minEdge.getVertex2();
+                chosenVertices.add(minEdge.getVertex2());
+            } else if (!visited[minEdge.getVertex1()-1] && visited[minEdge.getVertex2()-1]) {
+                mstEdges.add(minEdge);
+                visited[minEdge.getVertex1()-1] = true;
+                vertex = minEdge.getVertex1();
+                chosenVertices.add(minEdge.getVertex1());
             }
+            else {
+                System.out.println("ERROR");
+                System.exit(-1);
+            }
+            System.out.println(chosenVertices.toString());
+            c++;
         }
     }
-
-    private void processNeighbours(int vertex) {
-        // Iterate through all edges adjacent to the given vertex
-        // and decrease their keys in the heap if necessary
-        // (only if the adjacent vertex is not visited)
-        /*for (Edge edge : mstEdges) {
-            int otherVertex;
-            if (edge.getVertex1() == vertex) {
-                otherVertex = edge.getVertex2();
-            } else if (edge.getVertex2() == vertex) {
-                otherVertex = edge.getVertex1();
-            } else {
-                continue; // Not adjacent
-            }
-
-            if (!visited[otherVertex]) {
-                float newKey = edge.getWeight();
-
-                    if (minHeap.key(otherVertex) > newKey) {
-                        minHeap.decrease_key(otherVertex, newKey);
-                    }
-
-            }
-        }*/
-
-        for (Edge edge : minHeap.getHeapArray()) {
-            int v1 = edge.getVertex1();
-            int v2 = edge.getVertex2();
-
-            if ((v1 == vertex && !visited[v2]) || (v2 == vertex && !visited[v1])) {
-                int otherVertex = (v1 == vertex) ? v2 : v1;
-                if (minHeap.in_heap(otherVertex)) {
-                    float newKey = edge.getWeight();
-                    if (minHeap.key(otherVertex) > newKey) {
-                        minHeap.decrease_key(otherVertex, newKey);
-                    }
-                }
+    private boolean allVerticesVisited() {
+        for (boolean vertexVisited : visited) {
+            if (!vertexVisited) {
+                return false;
             }
         }
-
-
+        return true;
     }
 
     public ArrayList<Edge> getMSTEdges() {

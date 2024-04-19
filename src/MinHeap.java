@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -9,7 +10,7 @@ public class MinHeap {
 
     public MinHeap(int maxSize) {
         this.maxSize = maxSize;
-        heapArray = new Edge[maxSize + 1]; // Indexing from 1 to n
+        heapArray = new Edge[maxSize+1];
         idToIndexMap = new HashMap<>();
         currentSize = 0;
     }
@@ -39,6 +40,36 @@ public class MinHeap {
             throw new IllegalStateException("Heap is empty.");
         }
         return heapArray[1].getVertex1();
+    }
+
+    public ArrayList<Edge> findAllEdges(int vertex){
+        ArrayList<Edge> connected = new ArrayList<>(3);
+        for(Edge edge : heapArray){
+            if(edge != null){
+                if(edge.getVertex1() == vertex+1 || edge.getVertex2() == vertex+1){
+                    connected.add(edge);
+                }
+            }
+        }
+        return connected;
+    }
+
+    public Edge findLowestEdge(ArrayList<Integer> vertices) {
+        Edge minimum = null;
+        int index = 0;
+        for (int i = 1; i < heapArray.length; i++) {
+            Edge edge = heapArray[i];
+            if (edge != null && (vertices.contains(edge.getVertex1()) || vertices.contains(edge.getVertex2()))) {
+                if (minimum == null || edge.getWeight() < minimum.getWeight()) {
+                    minimum = edge;
+                    index = i;
+                }
+            }
+        }
+        if (minimum != null) {
+            delete(index); // Delete the found edge if it's not null
+        }
+        return minimum;
     }
 
     public float key(int id) {
@@ -76,7 +107,11 @@ public class MinHeap {
         return Arrays.copyOfRange(heapArray, 1, currentSize + 1);
     }
 
-    private void insert(Edge edge) {
+    public int getCurrentSize(){
+        return currentSize;
+    }
+
+    public void insert(Edge edge) {
         if (currentSize == maxSize) {
             throw new IllegalStateException("Heap is full, cannot insert more elements.");
         }
@@ -87,7 +122,8 @@ public class MinHeap {
         bubble_up(index);
     }
 
-    private void delete(int index) {
+    public void delete(int index) {
+        System.out.println(currentSize);
         Edge lastEdge = heapArray[currentSize];
         heapArray[index] = lastEdge;
         idToIndexMap.put(lastEdge.getVertex1(), index);
