@@ -7,11 +7,13 @@ public class DataReader {
     private File file;
     private ArrayList<Edge> edges = new ArrayList<Edge>(10);
     private int numOfEdges;
+    private int numOfVertices;
     public DataReader() throws FileNotFoundException {
         file = new File("src/graph");
         Scanner sc = new Scanner(file);
 
-        numOfEdges = Integer.parseInt(sc.nextLine());
+        numOfVertices = Integer.parseInt(sc.nextLine());
+        numOfEdges = 0;
         while (sc.hasNextLine()) {
             String s = sc.nextLine();
             String[] inputs = s.trim().split("\\s+");
@@ -22,6 +24,7 @@ public class DataReader {
 
             Edge e = new Edge(v1, v2, weight);
             edges.add(e);
+            numOfEdges++;
         }
     }
     public ArrayList<Edge> getEdges(){
@@ -30,8 +33,11 @@ public class DataReader {
     public int getNumOfEdges(){
         return numOfEdges;
     }
+    public int getNumOfVertices(){
+        return numOfVertices;
+    }
 
-    public void Save(ArrayList<Edge> saveEdge){
+    public static void Save(ArrayList<Edge> saveEdge){
         //TODO: SAVE FILE OF EDGES CHOSEN
     }
 }
