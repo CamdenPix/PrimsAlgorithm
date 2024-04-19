@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class MinHeap {
@@ -57,6 +58,7 @@ public class MinHeap {
         return minEdge;
     }
 
+
     public void decrease_key(int id, float newKey) {
         if (!in_heap(id)) {
             throw new IllegalArgumentException("Element with id " + id + " not found in heap.");
@@ -68,6 +70,10 @@ public class MinHeap {
         }
         heapArray[index] = new Edge(heapArray[index].getVertex1(), heapArray[index].getVertex2(), newKey);
         bubble_up(index);
+    }
+
+    public Edge[] getHeapArray() {
+        return Arrays.copyOfRange(heapArray, 1, currentSize + 1);
     }
 
     private void insert(Edge edge) {

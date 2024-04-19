@@ -1,104 +1,122 @@
 
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.PriorityQueue;
+
 
 public class PrimAlgorithm {
-    static class Graph {
-        int V;
-        ArrayList<ArrayList<Node>> adj;
+    private ArrayList<Edge> mstEdges;
+    private boolean[] visited;
+    private MinHeap minHeap;
 
-        // Inner class to represent an edge (destination and weight)
-        static class Node {
-            int dest;
-            int weight;
+    public PrimAlgorithm() throws FileNotFoundException {
+        DataReader dataReader = new DataReader();
+        ArrayList<Edge> edges = dataReader.getEdges();
 
-            Node(int dest, int weight) {
-                this.dest = dest;
-                this.weight = weight;
-            }
+        int numOfEdges = dataReader.getNumOfEdges();
+
+
+        this.mstEdges = new ArrayList<>();
+        this.visited = new boolean[numOfEdges + 1]; // Assuming vertices are numbered from 1 to numOfEdges
+        this.minHeap = new MinHeap(numOfEdges);
+
+        // Initialize visited array
+        for (int i = 1; i <= numOfEdges; i++) {
+            visited[i] = false;
         }
 
-        Graph(int V) {
-            this.V = V;
-            adj = new ArrayList<>(V);
-            for (int i = 0; i < V; i++)
-                adj.add(new ArrayList<>());
+        // Add all edges to the minHeap
+        minHeap.heap_ini(edges.toArray(new Edge[0]), numOfEdges);
+        System.out.println(minHeap.min_key());
+        // Perform Prim's algorithm
+        prim();
+    }
+
+    private boolean isEmpty(MinHeap minHeap){
+        try{
+            minHeap.min_key();
+            System.out.println("TRY PASSED");
         }
-
-        // Function to add an undirected edge between two vertices with given weight
-        void addEdge(int src, int dest, int weight) {
-            adj.get(src).add(new Node(dest, weight));
-            adj.get(dest).add(new Node(src, weight));
+        catch(Exception e)
+        {
+            return true;
         }
+        return false;
+    }
+    private void prim() {
+        while (!isEmpty(minHeap)) {
+            System.out.println("INWHILELOOPP");
+            Edge minEdge = minHeap.delete_min();
+            int v1 = minEdge.getVertex1();
+            int v2 = minEdge.getVertex2();
 
-        // Function to find the Minimum Spanning Tree using Prim's algorithm
-        void primMST() {
-            int[] parent = new int[V];
-            int[] key = new int[V];
-            boolean[] inMST = new boolean[V];
-
-            for (int i = 0; i < V; i++) {
-                parent[i] = -1;		 // Array to store the parent node of each vertex in the MST
-                key[i] = Integer.MAX_VALUE; // Array to store the minimum key value for each vertex
-                inMST[i] = false;	 // Array to track if the vertex is in the MST or not
-            }
-
-            PriorityQueue<Node> minHeap = new PriorityQueue<>((a, b) -> a.weight - b.weight);
-            MinHeap minHeap1 = new MinHeap(V);
-
-            key[0] = 0;					 // Start the MST from vertex 0
-            minHeap.add(new Node(0, key[0]));
-
-            while (!minHeap.isEmpty()) {
-                Node u = minHeap.poll(); // Extract the node with the minimum key value
-                int uVertex = u.dest;
-                inMST[uVertex] = true;
-
-                // Traverse through all adjacent vertices of u (the extracted vertex) and update their key values
-                for (Node v : adj.get(uVertex)) {
-                    int vVertex = v.dest;
-                    int weight = v.weight;
-
-                    // If v is not yet included in MST and weight of u-v is less than key value of v, then update key value and parent of v
-                    if (!inMST[vVertex] && weight < key[vVertex]) {
-                        parent[vVertex] = uVertex;
-                        key[vVertex] = weight;
-                        minHeap.add(new Node(vVertex, key[vVertex]));
-                    }
-                }
-            }
-
-            printMST(parent);
-        }
-
-        // Function to print the edges of the Minimum Spanning Tree
-        void printMST(int[] parent) {
-            System.out.println("Edges of Minimum Spanning Tree:");
-            for (int i = 1; i < V; i++) {
-                System.out.println(parent[i] + " - " + i);
+            if (!visited[v1] || !visited[v2]) {
+                mstEdges.add(minEdge);
+                visited[v1] = true;
+                visited[v2] = true;
+                processNeighbours(v1);
+                processNeighbours(v2);
             }
         }
     }
 
-    public static void main(String[] args) {
-        int V = 9;
-        Graph graph = new Graph(V);
-        graph.addEdge(0, 1, 4);
-        graph.addEdge(0, 7, 8);
-        graph.addEdge(1, 2, 8);
-        graph.addEdge(1, 7, 11);
-        graph.addEdge(2, 3, 7);
-        graph.addEdge(2, 8, 2);
-        graph.addEdge(2, 5, 4);
-        graph.addEdge(3, 4, 9);
-        graph.addEdge(3, 5, 14);
-        graph.addEdge(4, 5, 10);
-        graph.addEdge(5, 6, 2);
-        graph.addEdge(6, 7, 1);
-        graph.addEdge(6, 8, 6);
-        graph.addEdge(7, 8, 7);
+    private void processNeighbours(int vertex) {
+        // Iterate through all edges adjacent to the given vertex
+        // and decrease their keys in the heap if necessary
+        // (only if the adjacent vertex is not visited)
+        /*for (Edge edge : mstEdges) {
+            int otherVertex;
+            if (edge.getVertex1() == vertex) {
+                otherVertex = edge.getVertex2();
+            } else if (edge.getVertex2() == vertex) {
+                otherVertex = edge.getVertex1();
+            } else {
+                continue; // Not adjacent
+            }
 
-        graph.primMST();
+            if (!visited[otherVertex]) {
+                float newKey = edge.getWeight();
+
+                    if (minHeap.key(otherVertex) > newKey) {
+                        minHeap.decrease_key(otherVertex, newKey);
+                    }
+
+            }
+        }*/
+
+        for (Edge edge : minHeap.getHeapArray()) {
+            int v1 = edge.getVertex1();
+            int v2 = edge.getVertex2();
+
+            if ((v1 == vertex && !visited[v2]) || (v2 == vertex && !visited[v1])) {
+                int otherVertex = (v1 == vertex) ? v2 : v1;
+                if (minHeap.in_heap(otherVertex)) {
+                    float newKey = edge.getWeight();
+                    if (minHeap.key(otherVertex) > newKey) {
+                        minHeap.decrease_key(otherVertex, newKey);
+                    }
+                }
+            }
+        }
+
+
+    }
+
+    public ArrayList<Edge> getMSTEdges() {
+        return mstEdges;
+    }
+
+    public static void main(String[] args) {
+        try {
+            PrimAlgorithm primMST = new PrimAlgorithm();
+            ArrayList<Edge> mstEdges = primMST.getMSTEdges();
+            System.out.println(mstEdges);
+            System.out.println("Minimum Spanning Tree Edges:");
+            for (Edge edge : mstEdges) {
+                System.out.println(edge);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
